@@ -1,0 +1,512 @@
+macrof1Efficacy <- (2*macroRTBICE*macroCTBICE)/(macroRTBICE+macroCTBICE)
+#Return list object for multiclass classification
+return(list(Mappings = mappings,
+confusionMatrix = ctab,
+referenceCounts = refCnts,
+predictionCounts = predCnts,
+overallAccuracy = oa,
+MICE = mice,
+usersAccuracies = ua,
+CTBICEs = ctbice,
+producersAccuracies = pa,
+RTBICEs = rtbice,
+f1Scores = f1,
+f1Efficacies = f1Efficacy,
+macroPA = macroPA,
+macroRTBUCE = macroRTBICE,
+macroUA = macroUA,
+macroCTBICE = macroCTBICE,
+macroF1 = macroF1,
+macroF1Efficacy = macrof1Efficacy
+)
+)
+}else{
+#Return list object for binary classification
+negativeIndex = 2 - positiveIndex
+return(list(Mappings = mappings,
+confusionMatrix = ctab,
+referenceCounts = refCnts,
+predictionCounts = predCnts,
+positiveCase = mappings[positiveIndex],
+overallAccuracy = oa,
+mice = mice,
+Precision = unname(ua)[positiveIndex],
+precisionEfficacy = unname(ctbice)[positiveIndex],
+NPV = unname(ua)[negativeIndex],
+npvEfficacy = unname(ctbice)[negativeIndex],
+Recall = unname(pa)[positiveIndex],
+recallEfficacy = unname(rtbice)[positiveIndex],
+Specificity = unname(pa)[negativeIndex],
+specificityEfficicacy = unname(rtbice)[negativeIndex],
+f1Score = unname(f1)[positiveIndex],
+f1ScoreEfficacy = unname(f1Efficacy)[positiveIndex]
+)
+)
+}
+}
+#Calcualte metrics from a confusion matrix
+miceCM <- function(cm,#Factor of predicted labels
+mappings=levels(as.factor(row.names(cm))), #Names of classes (if not provided, will use factor levels)
+multiclass = TRUE, #TRUE for multiclass, FALSE for binary
+positiveIndex = 1 #Index for the positive case (only used for binary classification
+){
+positiveIndex <- as.numeric(positiveIndex) #Make sure index is numeric
+ctab <- cm #generate contingency table
+colnames(ctab) <- mappings #Apply class names to columns
+rownames(ctab) <- mappings #Apply class names to rows
+dimnames(ctab) <- setNames(dimnames(ctab),c("Predicted", "Reference")) #Label row axis as "predicted" and column axis as "reference"
+refCnts <- colSums(ctab) #Get column total counts
+names(refCnts) <- mappings #Name column counts
+predCnts <- rowSums(ctab) #Get row total counts
+names(predCnts) <- mappings #Name row counts
+oa <- sum(diag(ctab))/sum(ctab) #Calcualte overall accuracy
+sumCols <- colSums(ctab)
+sumRows <- rowSums(ctab)
+sumColsN <- (sumCols/sum(sumCols))+.00001 #calculate nj/n
+sumColsN2 <- sumColsN*sumColsN #square nj/n
+oa0 <- sum(sumColsN2) #calculate random model correction
+mice <- (oa-oa0)/(1-oa0) #Calculate MICE
+ua <- diag(ctab)/(sumRows +.00001) #Calculate all class user's accuracies (i.e., precisions)
+pa <- diag(ctab)/(sumCols +.00001) #Calculate all class producer's accuracies (i.e., recalls)
+f1 <- (2*ua*pa)/(ua+pa) #Calculate all class F1-scores ((2*Precision*Recall)/(precision+recall))
+rtbice <- (pa - sumColsN)/(1- sumColsN) #Calculate all reference-total-based image classification efficacies
+ctbice <- (ua - sumColsN)/(1- sumColsN) #Calcualte all classification-total-based image classification efficacies
+f1Efficacy <- (2*rtbice*ctbice)/(rtbice+ctbice) #Calculate F1-scores with efficacy-based correction
+if(multiclass==TRUE){
+#Add names to all vectors
+names(ua) <- mappings
+names(pa) <- mappings
+names(rtbice) <- mappings
+names(ctbice) <- mappings
+names(f1) <- mappings
+names(f1Efficacy) <- mappings
+#Macro-average all UAs/precisions, PAs/recalls, and F1-scores for class-aggregated metrics
+macroUA <- mean(ua)
+macroPA <- mean(pa)
+macroF1 <- (2*macroUA*macroPA)/(macroUA+macroPA)
+#Macro-average all efficiacy-based measusures for class-aggregated metrics
+macroRTBICE <- mean(rtbice)
+macroCTBICE <- mean(ctbice)
+macrof1Efficacy <- (2*macroRTBICE*macroCTBICE)/(macroRTBICE+macroCTBICE)
+#Return list object for multiclass classification
+return(list(Mappings = mappings,
+confusionMatrix = ctab,
+referenceCounts = refCnts,
+predictionCounts = predCnts,
+overallAccuracy = oa,
+MICE = mice,
+usersAccuracies = ua,
+CTBICEs = ctbice,
+producersAccuracies = pa,
+RTBICEs = rtbice,
+f1Scores = f1,
+f1Efficacies = f1Efficacy,
+macroPA = macroPA,
+macroRTBUCE = macroRTBICE,
+macroUA = macroUA,
+macroCTBICE = macroCTBICE,
+macroF1 = macroF1,
+macroF1Efficacy = macrof1Efficacy
+)
+)
+}else{
+#Return list object for binary classification
+negativeIndex = 2 - positiveIndex
+return(list(Mappings = mappings,
+confusionMatrix = ctab,
+referenceCounts = refCnts,
+predictionCounts = predCnts,
+positiveCase = mappings[positiveIndex],
+overallAccuracy = oa,
+mice = mice,
+Precision = unname(ua)[positiveIndex],
+precisionEfficacy = unname(ctbice)[positiveIndex],
+NPV = unname(ua)[negativeIndex],
+npvEfficacy = unname(ctbice)[negativeIndex],
+Recall = unname(pa)[positiveIndex],
+recallEfficacy = unname(rtbice)[positiveIndex],
+Specificity = unname(pa)[negativeIndex],
+specificityEfficicacy = unname(rtbice)[negativeIndex],
+f1Score = unname(f1)[positiveIndex],
+f1ScoreEfficacy = unname(f1Efficacy)[positiveIndex]
+)
+)
+}
+}
+#Estimate metric confidence intervals using bootstrap percentile method
+miceCI <- function(reps=200,
+frac=.7,
+lowPercentile,
+highPercentile,
+reference, #Factor of correct/reference labels
+prediction,#Factor of predicted labels
+mappings=levels(as.factor(reference)), #Names of classes (if not provided, will use factor levels)
+multiclass = TRUE, #TRUE for multiclass, FALSE for binary
+positiveIndex = 1 #Index for the positive case (only used for binary classification
+){
+if(multiclass==TRUE){
+resultDF <- data.frame(
+overallAccuracy = as.numeric(),
+MICE = as.numeric(),
+macroPA = as.numeric(),
+macroRTBUCE = as.numeric(),
+macroUA = as.numeric(),
+macroCTBICE = as.numeric(),
+macroF1 = as.numeric(),
+macroF1Efficacy = as.numeric())
+}else{
+resultDF <- data.frame(
+overallAccuracy = as.numeric(),
+MICE = as.numeric(),
+Precision = as.numeric(),
+precisionEfficacy = as.numeric(),
+NPV = as.numeric(),
+npvEfficacy = as.numeric(),
+Recall = as.numeric(),
+recallEfficacy = as.numeric(),
+Specificity = as.numeric(),
+specificityEfficicacy = as.numeric(),
+f1Score = as.numeric(),
+f1ScoreEfficacy = as.numeric())
+}
+inData <- data.frame(ref=reference, pred=prediction)
+positiveIndex <- as.numeric(positiveIndex)
+repLst <- list()
+i <- 1
+while(i <= reps){
+subData <- inData |> dplyr::sample_frac(frac, replace=TRUE)
+ctab <- table(subData$ref, subData$pred) #generate contingency table
+colnames(ctab) <- mappings #Apply class names to columns
+rownames(ctab) <- mappings #Apply class names to rows
+dimnames(ctab) <- setNames(dimnames(ctab),c("Predicted", "Reference")) #Label row axis as "predicted" and column axis as "reference"
+refCnts <- colSums(ctab) #Get column total counts
+names(refCnts) <- mappings #Name column counts
+predCnts <- rowSums(ctab) #Get row total counts
+names(predCnts) <- mappings #Name row counts
+oa <- sum(diag(ctab))/sum(ctab) #Calcualte overall accuracy
+sumCols <- colSums(ctab)
+sumRows <- rowSums(ctab)
+sumColsN <- (sumCols/sum(sumCols))+.00001 #calculate nj/n
+sumColsN2 <- sumColsN*sumColsN #square nj/n
+oa0 <- sum(sumColsN2) #calculate random model correction
+mice <- (oa-oa0)/(1-oa0) #Calculate MICE
+ua <- diag(ctab)/(sumRows +.00001) #Calculate all class user's accuracies (i.e., precisions)
+pa <- diag(ctab)/(sumCols +.00001) #Calculate all class producer's accuracies (i.e., recalls)
+f1 <- (2*ua*pa)/(ua+pa) #Calculate all class F1-scores ((2*Precision*Recall)/(precision+recall))
+rtbice <- (pa - sumColsN)/(1- sumColsN) #Calculate all reference-total-based image classification efficacies
+ctbice <- (ua - sumColsN)/(1- sumColsN) #Calcualte all classification-total-based image classification efficacies
+f1Efficacy <- (2*rtbice*ctbice)/(rtbice+ctbice) #Calculate F1-scores with efficacy-based correction
+if(multiclass==TRUE){
+#Add names to all vectors
+names(ua) <- mappings
+names(pa) <- mappings
+names(rtbice) <- mappings
+names(ctbice) <- mappings
+names(f1) <- mappings
+names(f1Efficacy) <- mappings
+#Macro-average all UAs/precisions, PAs/recalls, and F1-scores for class-aggregated metrics
+macroUA <- mean(ua)
+macroPA <- mean(pa)
+macroF1 <- (2*macroUA*macroPA)/(macroUA+macroPA)
+#Macro-average all efficiacy-based measusures for class-aggregated metrics
+macroRTBICE <- mean(rtbice)
+macroCTBICE <- mean(ctbice)
+macrof1Efficacy <- (2*macroRTBICE*macroCTBICE)/(macroRTBICE+macroCTBICE)
+#Return list object for multiclass classification
+bootResult <- data.frame(
+overallAccuracy = oa,
+MICE = mice,
+macroPA = macroPA,
+macroRTBUCE = macroRTBICE,
+macroUA = macroUA,
+macroCTBICE = macroCTBICE,
+macroF1 = macroF1,
+macroF1Efficacy = macrof1Efficacy
+)
+}else{
+#Return list object for binary classification
+negativeIndex = 2 - positiveIndex
+bootResult <- data.frame(
+overallAccuracy = oa,
+MICE = mice,
+Precision = unname(ua)[positiveIndex],
+precisionEfficacy = unname(ctbice)[positiveIndex],
+NPV = unname(ua)[negativeIndex],
+npvEfficacy = unname(ctbice)[negativeIndex],
+Recall = unname(pa)[positiveIndex],
+recallEfficacy = unname(rtbice)[positiveIndex],
+Specificity = unname(pa)[negativeIndex],
+specificityEfficicacy = unname(rtbice)[negativeIndex],
+f1Score = unname(f1)[positiveIndex],
+f1ScoreEfficacy = unname(f1Efficacy)[positiveIndex]
+)
+}
+resultDF <- dplyr::bind_rows(resultDF, bootResult)
+i <- i+1
+}
+calculate_stats <- function(column) {
+mean_val <- mean(column)
+median_val <- median(column)
+quantiles <- quantile(column, probs = c(lowPercentile, highPercentile))
+return(c(mean = mean_val, median = median_val, ciLow = quantiles[1], ciHigh = quantiles[2]))
+}
+# Apply the function to each row and convert the result to a data frame
+resultStats <- t(apply(resultDF, 2, calculate_stats))
+# Convert the matrix back to a data frame and add row names
+resultStats <- as.data.frame(resultStats)
+resultStats$metric <- rownames(resultStats)
+row.names(resultStats) <- NULL
+resultStats <- resultStats[, c(ncol(resultStats), 1:(ncol(resultStats)-1))]
+names(resultStats) <- c("metric", "mean", "median", "low.ci", "high.ci")
+return(resultStats)
+}
+#Compare two models using bootstrapping and paired t-test
+#https://www.tmwr.org/compare
+miceCompare <- function(ref, result1, result2, reps, frac){
+inData <- data.frame(ref=ref, result1=result1, result2=result2)
+resultsDF <- data.frame(mice1 = numeric(),
+mice2 = numeric())
+i <- 1
+while(i <= reps){
+subData <- inData |> dplyr::sample_frac(frac, replace=TRUE)
+ctab1 <- table(subData$ref, subData$result1)
+oa1 <- sum(diag(ctab1))/sum(ctab1)
+sumCols1 <- colSums(ctab1)
+sumRows1 <- rowSums(ctab1)
+sumColsN1 <- (sumCols1/sum(sumCols1))+.00001
+sumColsN21 <- sumColsN1*sumColsN1
+oa01 <- sum(sumColsN21)
+mice1 <- (oa1-oa01)/(1-oa01)
+ctab2 <- table(subData$ref, subData$result2)
+oa2 <- sum(diag(ctab2))/sum(ctab2)
+sumCols2 <- colSums(ctab2)
+sumRows2 <- rowSums(ctab2)
+sumColsN2 <- (sumCols2/sum(sumCols2))+.00001
+sumColsN22 <- sumColsN2*sumColsN2
+oa02 <- sum(sumColsN22)
+mice2 <- (oa2-oa02)/(1-oa02)
+bootResults <- data.frame(mice1 = mice1,
+mice2 = mice2)
+resultsDF <- bind_rows(resultsDF, bootResults)
+i <- i+1
+}
+return(t.test(resultsDF$mice1, resultsDF$mice2, paired=TRUE))
+}
+#mice() examples======================
+#Multiclass example
+mice(mcData$ref,
+mcData$pred,
+mappings=c("Barren", "Forest", "Impervious", "Low Vegetation", "Mixed Dev", "Water"),
+multiclass=TRUE)
+#Binary example
+mice(biData$ref,
+biData$pred,
+mappings = c("Mined", "Not Mined"),
+multiclass=FALSE,
+positiveIndex=1)
+#miceCM() examples===================
+#Make confusion matrices
+cmMC <- table(mcData$ref, mcData$pred)
+cmB <- table(biData$ref, biData$pred)
+#Multiclass example
+miceCM(cmMC,
+mappings=c("Barren", "Forest", "Impervious", "Low Vegetation", "Mixed Dev", "Water"),
+multiclass=TRUE)
+#Binary example
+miceCM(cmB,
+mappings=c("Mined", "Not Mined"),
+multiclass=FALSE,
+positiveIndex=1)
+#miceCI() examples
+#Multiclass example
+ciResultsMC <- miceCI(rep=1000,
+frac=.7,
+mcData$ref,
+mcData$pred,
+lowPercentile=0.025,
+highPercentile=0.975,
+mappings=c("Barren", "Forest", "Impervious", "Low Vegetation", "Mixed Dev", "Water"),
+multiclass=TRUE)
+ciResultsMC
+#Binary example
+ciResultsBi <- miceCI(rep=1000,
+frac=.7,
+biData$ref,
+biData$pred,
+lowPercentile=0.025,
+highPercentile=0.975,
+mappings = c("Mined", "Not Mined"),
+multiclass=FALSE,
+positiveIndex=1)
+ciResultsBi
+#miceCompare() exampole====================
+miceCompare(ref=compareData$ref,
+result1=compareData$rfPred,
+result2=compareData$dtPred,
+reps=1000,
+frac=.7)
+devtools::use_vignette('calculateMetrics')
+usethis::use_vignette('calculateMetrics')
+usethis::use_vignette('calculateCIs')
+usethis::use_vignette('compareModels')
+devtools::document()
+wgData <- read.csv("C:/Users/amaxwel6/Dropbox/ABGSL/samProject/countsTable.csv")
+wgData <- read.csv("C:/Users/amaxwel6/Dropbox/ABGSL/samProject/countsTable.csv")
+View(wgData)
+library(tidyverse)
+wgData <-wgData |> mutate(l3_perRecovery=(l3_cnt_post3-l3_cnt_post)/l3_cnt_post)
+wgData <-wgData |> mutate(l1_perRecovery=(l1_cnt_post3-l1_cnt_post)/l1_cnt_post)
+wgData <-wgData |> mutate(l2_perRecovery=(l2_cnt_post3-l2_cnt_post)/l2_cnt_post)
+wgData <-wgData |> mutate(l3_perRecovery=(l3_cnt_post3-l3_cnt_post)/l3_cnt_post)
+wgData <-wgData |> mutate(l4_perRecovery=(l4_cnt_post3-l4_cnt_post)/l4_cnt_post)
+ggplot(wvData, aes(x=l3_PerLoss, y=l3_perRecovery))
+ggplot(wgData, aes(x=l3_PerLoss, y=l3_perRecovery))+
+geom_point()
+ggplot(wgData, aes(x=l1_PerLoss, y=l1_perRecovery))+
+geom_point()
+ggplot(wgData, aes(x=l2_PerLoss, y=l2_perRecovery))+
+geom_point()
+ggplot(wgData, aes(x=l3_PerLoss, y=l3_perRecovery))+
+geom_point()
+ggplot(wgData, aes(x=l4_PerLoss, y=l4_perRecovery))+
+geom_point()
+library(terra)
+library(geodl)
+gaussMatrix <- matrix(c(1, 4, 6, 4, 1,
+4, 16, 24, 16, 4,
+6, 24, 36, 24, 6,
+4, 16, 24, 16, 4,
+1, 4, 6, 4, 1), nrow=5, ncol=5)/255
+gaussMatrix
+dtm <- rast("C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\dtm.tif")
+stk <- makeTerrainDerivatives(dtm,
+res=2,
+"C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\stk.tif")
+stkG1 <- focal(stk, w=gaussMatrix)
+stkG1A <- aggregate(stkG1, fact=2, func="mean")
+stkG2 <- focal(stkG1A, w=gaussMatrix)
+stkG2A <- aggregate(stkG2, fact=2, func="mean")
+stkG3 <- focal(stkG2A, w=gaussMatrix)
+stkG3A <- aggregate(stkG3, fact=2, func="mean")
+stkG4 <- focal(stkG3A, w=gaussMatrix)
+stkG4A <- aggregate(stkG4, fact=2, func="mean")
+writeRaster(stkG1A, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\agg1.tif")
+writeRaster(stkG1A, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\agg1.tif")
+writeRaster(stkG2A, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\agg2.tif")
+writeRaster(stkG3A, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\agg3.tif")
+writeRaster(stkG4A, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\agg4.tif")
+makeOctaves <- function(dtm){
+gaussMatrix <- matrix(c(1, 4, 6, 4, 1,
+4, 16, 24, 16, 4,
+6, 24, 36, 24, 6,
+4, 16, 24, 16, 4,
+1, 4, 6, 4, 1), nrow=5, ncol=5)/255
+r <- focal(stk, w=gaussMatrix)
+for (i in 1:nrow(r)) {
+for (j in 1:ncol(r)) {
+if ((i %% 2 == 0) & (j %% 2 == 0)) {
+r[i, j] <- 0
+}
+}
+}
+r2 <- focal(r, w=gauusMatrix)*4
+}
+makeOctaves <- function(dtm){
+gaussMatrix <- matrix(c(1, 4, 6, 4, 1,
+4, 16, 24, 16, 4,
+6, 24, 36, 24, 6,
+4, 16, 24, 16, 4,
+1, 4, 6, 4, 1), nrow=5, ncol=5)/255
+r <- focal(stk, w=gaussMatrix)
+for (i in 1:nrow(r)) {
+for (j in 1:ncol(r)) {
+if ((i %% 2 == 0) & (j %% 2 == 0)) {
+r[i, j] <- 0
+}
+}
+}
+r2 <- focal(r, w=gauusMatrix)*4
+return(r2)
+}
+oct1 <- makeOctaves(stk)
+stk
+nrow(stk)
+oneRow <- rep(c(0,1), nrow(stk)/2)
+oneRow <- rep(c(1,0), nrow(stk)/2)
+grid <- rep(oneRow, ncol(stk)/2)
+stkBlank <- stk
+stkBlank <- stk[1,,]
+View(stkBlank)
+stkBlank <- terra::subset(stk, 1)
+stkBlank[] <- grid
+stkBlank
+writeRaster(stkBlank, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\octMask.tif")
+grid <- matrix(rep(oneRow, ncol(stk)/2), byrow=TRUE)
+oneCol <- rep(c(1,0), ncol(stk)/2)
+oneRow <- rep(c(1,0), nrow(stk)/2)
+gridRow <- matrix(rep(oneRow, ncol(stk)/2), byrow=TRUE)
+oneCol <- rep(c(1,0), ncol(stk)/2)
+gridCol <- matrix(rep(oneCol, ncol(stk)/2), byrow=FALSE)
+oneRow <- rep(c(1,0), nrow(stk)/2)
+gridRow <- matrix(rep(oneRow, ncol(stk)/2), byrow=TRUE)
+oneCol <- rep(c(1,0), ncol(stk)/2)
+gridCol <- matrix(rep(oneCol, ncol(stk)/2), byrow=FALSE)
+stkRow <- terra:: subset(stk, 1)
+stkCol <- terra::subset(stk, 1)
+stkRow[] <- gridRow
+stkCol[] <- gridCol
+octMask <- stkCol*stkRow
+writeRaster(octMask, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\octMask2.tif")
+oneRow <- rep(c(1,0), nrow(stk)/2)
+gridRow <- matrix(rep(oneRow, ncol(stk)/2), byrow=TRUE)
+oneColO <- rep(1, nrow(stk))
+oneColE <- rep(0, nrow(stk))
+gridCol <- matrix(rep(c(oneColO, oneColE), ncol(stk)/2), byrow=TRUE)
+stkRow <- terra:: subset(stk, 1)
+stkCol <- terra::subset(stk, 1)
+stkRow[] <- gridRow
+stkCol[] <- gridCol
+octMask <- stkCol*stkRow
+writeRaster(octMask, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\octMask3.tif")
+oneRow <- rep(c(1,0), ncol(stk)/2)
+gridRow <- matrix(rep(oneRow, ncol(stk)/2), byrow=TRUE)
+oneColO <- rep(1, nrow(stk))
+oneColE <- rep(0, nrow(stk))
+gridCol <- matrix(rep(c(oneColO, oneColE), ncol(stk)/2), byrow=TRUE)
+stkRow <- terra:: subset(stk, 1)
+stkCol <- terra::subset(stk, 1)
+stkRow[] <- gridRow
+stkCol[] <- gridCol
+octMask <- stkCol*stkRow
+writeRaster(octMask, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\octMask4.tif")
+oneRow <- rep(c(1,0), ncol(stk)/2)
+gridRow <- matrix(rep(oneRow, nrow(stk)), byrow=TRUE)
+oneColO <- rep(1, ncol(stk))
+oneColE <- rep(0, ncol(stk))
+gridCol <- matrix(rep(c(oneColO, oneColE), nrow(stk)/2), byrow=TRUE)
+stkRow <- terra:: subset(stk, 1)
+stkCol <- terra::subset(stk, 1)
+stkRow[] <- gridRow
+stkCol[] <- gridCol
+octMask <- stkCol*stkRow
+writeRaster(octMask, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\octMask5.tif")
+gaussMatrix <- matrix(c(1, 4, 6, 4, 1,
+4, 16, 24, 16, 4,
+6, 24, 36, 24, 6,
+4, 16, 24, 16, 4,
+1, 4, 6, 4, 1), nrow=5, ncol=5)/255
+r <- focal(stk, w=gaussMatrix)
+oneRow <- rep(c(1,0), ncol(stk)/2)
+gridRow <- matrix(rep(oneRow, nrow(stk)), byrow=TRUE)
+oneColO <- rep(1, ncol(stk))
+oneColE <- rep(0, ncol(stk))
+gridCol <- matrix(rep(c(oneColO, oneColE), nrow(stk)/2), byrow=TRUE)
+stkRow <- terra:: subset(stk, 1)
+stkCol <- terra::subset(stk, 1)
+stkRow[] <- gridRow
+stkCol[] <- gridCol
+octMask <- stkCol*stkRow
+stkZeros <- r*octMask
+r2 <- focal(stkZeros, w=gaussMatrix)*4
+writeRaster(r2, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\gp1.tif")
+citation()

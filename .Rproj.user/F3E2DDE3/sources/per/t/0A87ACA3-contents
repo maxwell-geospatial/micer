@@ -1,0 +1,65 @@
+library(terra)
+library(geodl)
+
+gaussMatrix <- matrix(c(1, 4, 6, 4, 1,
+  4, 16, 24, 16, 4,
+  6, 24, 36, 24, 6,
+  4, 16, 24, 16, 4,
+  1, 4, 6, 4, 1), nrow=5, ncol=5)/255
+
+gaussMatrix
+
+dtm <- rast("C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\dtm.tif")
+
+stk <- makeTerrainDerivatives(dtm,
+                              res=2,
+                              "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\stk.tif")
+
+stkG1 <- focal(stk, w=gaussMatrix)
+stkG1A <- aggregate(stkG1, fact=2, func="mean")
+
+stkG2 <- focal(stkG1A, w=gaussMatrix)
+stkG2A <- aggregate(stkG2, fact=2, func="mean")
+
+stkG3 <- focal(stkG2A, w=gaussMatrix)
+stkG3A <- aggregate(stkG3, fact=2, func="mean")
+
+stkG4 <- focal(stkG3A, w=gaussMatrix)
+stkG4A <- aggregate(stkG4, fact=2, func="mean")
+
+writeRaster(stkG1A, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\agg1.tif")
+
+writeRaster(stkG2A, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\agg2.tif")
+
+writeRaster(stkG3A, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\agg3.tif")
+
+writeRaster(stkG4A, "C:\\Users\\amaxwel6\\Dropbox\\code_dev\\geodl\\data\\elev\\agg4.tif")
+
+
+
+gaussMatrix <- matrix(c(1, 4, 6, 4, 1,
+                          4, 16, 24, 16, 4,
+                          6, 24, 36, 24, 6,
+                          4, 16, 24, 16, 4,
+                          1, 4, 6, 4, 1), nrow=5, ncol=5)/255
+
+r <- focal(stk, w=gaussMatrix)
+
+
+oneRow <- rep(c(1,0), ncol(stk)/2)
+gridRow <- matrix(rep(oneRow, nrow(stk)), byrow=TRUE)
+oneColO <- rep(1, ncol(stk))
+oneColE <- rep(0, ncol(stk))
+gridCol <- matrix(rep(c(oneColO, oneColE), nrow(stk)/2), byrow=TRUE)
+
+stkRow <- terra:: subset(stk, 1)
+stkCol <- terra::subset(stk, 1)
+stkRow[] <- gridRow
+stkCol[] <- gridCol
+octMask <- stkCol*stkRow
+
+stkZeros <- r*octMask
+
+r2 <- focal(stkZeros, w=gaussMatrix)*4
+
+
