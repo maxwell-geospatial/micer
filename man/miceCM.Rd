@@ -66,15 +66,18 @@ $f1Efficacy = F1-score efficacy
 }
 \examples{
 #Multiclass example
+data(mcData)
 cmMC <- table(mcData$ref, mcData$pred)
 miceCM(cmMC,
 mappings=c("Barren", "Forest", "Impervious", "Low Vegetation", "Mixed Dev", "Water"),
 multiclass=TRUE)
 
 #Binary example
+data(biData)
 cmB <- table(biData$ref, biData$pred)
-miceCM(cmB,
+miceMCResult <- miceCM(cmB,
 mappings=c("Mined", "Not Mined"),
 multiclass=FALSE,
 positiveIndex=1)
+print(miceMCResult)
 }

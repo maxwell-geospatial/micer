@@ -18,15 +18,17 @@ miceCompare(ref, result1, result2, reps, frac)
 \item{frac}{proportion of samples to include in each bootstrap sample. Default is 0.7.}
 }
 \value{
-paired t-test results including t-statistic, degrees of freedom, p-value, 95% confidence interval, and mean difference
+paired t-test results including t-statistic, degrees of freedom, p-value, 95\% confidence interval, and mean difference
 }
 \description{
 Statistically compare two models using a paired t-test and bootstrap samples of the assessment results
 }
 \examples{
-miceCompare(ref=compareData$ref,
+data(compareData)
+compareResult <- miceCompare(ref=compareData$ref,
 result1=compareData$rfPred,
 result2=compareData$dtPred,
 reps=1000,
 frac=.7)
+print(compareResult)
 }

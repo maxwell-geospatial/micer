@@ -69,6 +69,7 @@ $f1Efficacy = F1-score efficacy
 }
 \examples{
 #Multiclass example
+data(mcData)
 mice(mcData$ref,
 mcData$pred,
 mappings=c("Barren", "Forest", "Impervious", "Low
@@ -76,6 +77,7 @@ Vegetation", "Mixed Dev", "Water"),
 multiclass=TRUE)
 
 #Binary example
+data(biData)
 mice(biData$ref,
 biData$pred,
 mappings = c("Mined", "Not Mined"),

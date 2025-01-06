@@ -21,7 +21,9 @@ miceCI(
 
 \item{frac}{proportion of samples to include in each bootstrap sample. Default is 0.7.}
 
-\item{highPercentile}{upper percentile for confidence interval. Default is 0.975 for a 95% CI.}
+\item{lowPercentile}{lower percentile for confidence interval. Default is 0.025 for a 95\% CI.}
+
+\item{highPercentile}{upper percentile for confidence interval. Default is 0.975 for a 95\% CI.}
 
 \item{reference}{column of reference data as factor data type.}
 
@@ -32,8 +34,6 @@ miceCI(
 \item{multiclass}{TRUE or FALSE. If TRUE, treats classification as multiclass. If FALSE, treats classification as binary. Default is TRUE.}
 
 \item{positiveIndex}{index for positive case for binary classification. Ignored for multiclass classification. Default is 1 or first factor level}
-
-\item{lowePercentile}{lower percentile for confidence interval. Default is 0.025 for a 95% CI.}
 }
 \value{
 dataframe object of metric name and estimated mean value, median value, and lower and upper CIs.
@@ -45,6 +45,7 @@ Returns metric name, mean metric value, median metric value, lower confidence in
 }
 \examples{
 #Multiclass example
+data(mcData)
 ciResultsMC <- miceCI(rep=1000,
 frac=.7,
 mcData$ref,
@@ -54,9 +55,10 @@ highPercentile=0.975,
 mappings=c("Barren", "Forest", "Impervious", "Low Vegetation", "Mixed Dev", "Water"),
 multiclass=TRUE)
 
-ciResultsMC
+print(ciResultsMC)
 
 #Binary example
+data(biData)
 ciResultsBi <- miceCI(rep=1000,
 frac=.7,
 biData$ref,
@@ -67,5 +69,5 @@ mappings = c("Mined", "Not Mined"),
 multiclass=FALSE,
 positiveIndex=1)
 
-ciResultsBi
+print(ciResultsBi)
 }

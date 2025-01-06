@@ -47,6 +47,7 @@
 #' @returns multiclass or binary assessment metrics in a list object. See details for description of generated metrics.
 #' @examples
 #' #Multiclass example
+#' data(mcData)
 #' mice(mcData$ref,
 #' mcData$pred,
 #' mappings=c("Barren", "Forest", "Impervious", "Low
@@ -54,11 +55,14 @@
 #' multiclass=TRUE)
 #'
 #' #Binary example
+#' data(biData)
 #' mice(biData$ref,
 #' biData$pred,
 #' mappings = c("Mined", "Not Mined"),
 #' multiclass=FALSE,
 #' positiveIndex=1)
+#' @export
+#' @importFrom stats median quantile setNames t.test
 mice <- function(reference, #Factor of correct/reference labels
                  prediction,#Factor of predicted labels
                  mappings=levels(as.factor(reference)), #Names of classes (if not provided, will use factor levels)
@@ -214,17 +218,22 @@ mice <- function(reference, #Factor of correct/reference labels
 #' @returns multiclass or binary assessment metrics in a list object. See details for description of generated metrics.
 #' @examples
 #' #Multiclass example
+#' data(mcData)
 #' cmMC <- table(mcData$ref, mcData$pred)
 #' miceCM(cmMC,
 #' mappings=c("Barren", "Forest", "Impervious", "Low Vegetation", "Mixed Dev", "Water"),
 #' multiclass=TRUE)
 #'
 #' #Binary example
+#' data(biData)
 #' cmB <- table(biData$ref, biData$pred)
-#' miceCM(cmB,
+#' miceMCResult <- miceCM(cmB,
 #' mappings=c("Mined", "Not Mined"),
 #' multiclass=FALSE,
 #' positiveIndex=1)
+#' print(miceMCResult)
+#' @export
+#' @importFrom stats median quantile setNames t.test
 miceCM <- function(cm,#Factor of predicted labels
                    mappings=levels(as.factor(row.names(cm))), #Names of classes (if not provided, will use factor levels)
                    multiclass = TRUE, #TRUE for multiclass, FALSE for binary
@@ -338,7 +347,7 @@ miceCM <- function(cm,#Factor of predicted labels
 #'
 #' @param reps number of bootstrap replicates to use. Default is 200.
 #' @param frac proportion of samples to include in each bootstrap sample. Default is 0.7.
-#' @param lowePercentile lower percentile for confidence interval. Default is 0.025 for a 95% CI.
+#' @param lowPercentile lower percentile for confidence interval. Default is 0.025 for a 95% CI.
 #' @param highPercentile upper percentile for confidence interval. Default is 0.975 for a 95% CI.
 #' @param reference column of reference data as factor data type.
 #' @param prediction column of reference data as factor data type.
@@ -348,6 +357,7 @@ miceCM <- function(cm,#Factor of predicted labels
 #' @returns dataframe object of metric name and estimated mean value, median value, and lower and upper CIs.
 #' @examples
 #' #Multiclass example
+#' data(mcData)
 #' ciResultsMC <- miceCI(rep=1000,
 #' frac=.7,
 #' mcData$ref,
@@ -357,9 +367,10 @@ miceCM <- function(cm,#Factor of predicted labels
 #' mappings=c("Barren", "Forest", "Impervious", "Low Vegetation", "Mixed Dev", "Water"),
 #' multiclass=TRUE)
 #'
-#' ciResultsMC
+#' print(ciResultsMC)
 #'
 #' #Binary example
+#' data(biData)
 #' ciResultsBi <- miceCI(rep=1000,
 #' frac=.7,
 #' biData$ref,
@@ -370,7 +381,9 @@ miceCM <- function(cm,#Factor of predicted labels
 #' multiclass=FALSE,
 #' positiveIndex=1)
 #'
-#' ciResultsBi
+#' print(ciResultsBi)
+#' @export
+#' @importFrom stats median quantile setNames t.test
 miceCI <- function(reps=200,
                    frac=.7,
                    lowPercentile,
@@ -533,11 +546,15 @@ miceCI <- function(reps=200,
 #' @param frac proportion of samples to include in each bootstrap sample. Default is 0.7.
 #' @returns paired t-test results including t-statistic, degrees of freedom, p-value, 95% confidence interval, and mean difference
 #' @examples
-#' miceCompare(ref=compareData$ref,
+#' data(compareData)
+#' compareResult <- miceCompare(ref=compareData$ref,
 #' result1=compareData$rfPred,
 #' result2=compareData$dtPred,
 #' reps=1000,
 #' frac=.7)
+#' print(compareResult)
+#' @export
+#' @importFrom stats median quantile setNames t.test
 miceCompare <- function(ref, result1, result2, reps, frac){
   #Compare two models using bootstrapping and paired t-test
   #https://www.tmwr.org/compare
@@ -582,7 +599,7 @@ miceCompare <- function(ref, result1, result2, reps, frac){
     bootResults <- data.frame(mice1 = mice1,
                               mice2 = mice2)
 
-    resultsDF <- bind_rows(resultsDF, bootResults)
+    resultsDF <- dplyr::bind_rows(resultsDF, bootResults)
 
     i <- i+1
 
