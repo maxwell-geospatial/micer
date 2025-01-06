@@ -13,9 +13,9 @@ mice(
 )
 }
 \arguments{
-\item{reference}{column/vector of reference data as factor data type.}
+\item{reference}{column/vector of reference labels as factor data type.}
 
-\item{prediction}{column/vector of reference data as factor data type.}
+\item{prediction}{column/vector of predicted labels as factor data type.}
 
 \item{mappings}{names of classes (if not provided, factor levels are used).}
 
@@ -28,44 +28,44 @@ multiclass or binary assessment metrics in a list object. See details for descri
 }
 \description{
 For multiclass classification, returns a list object with the following items:
-$Mappings = class names
-$confusionMatrix = confusion matrix where columns represent the reference data and rows represent the classification result
-$referenceCounts = count of samples in each reference class
-$predictionCounts = count of predictions in each class
-$overallAccuracy = overall accuracy
-$MICE = map image classification efficacy
-$usersAccuracies = class-level user's accuracies (1 - commission error)
-$CTBICEs = classification-total-based image classification efficacies (adjusted user's accuracies)
-$producersAccuracies = class-level producer's accuracies (1 - omission error)
-$RTBICEs = reference-total-based image classification efficacies (adjusted user's accuracies)
-$F1Scores = class-level harmonic mean of user's and producer's accuracies
-$F1Efficacies = F1-score efficacies
-$macroPA = class-aggregated, macro-averaged producer's accuracy
-$macroRTBICE = class-aggregated, macro-averaged reference-total-based image classification efficacy
-$macroUA = class-aggregated, macro-averaged user's accuracy
-$macroCTBICE = class-aggregated, macro-averaged classification-total-based image classification efficacy
-$macroF1 = class-aggregated, macro-averaged F1-score
-$macroF1Efficacy = class-aggregated, macro-averaged F1 efficacy
+$Mappings = class names;
+$confusionMatrix = confusion matrix where columns represent the reference data and rows represent the classification result;
+$referenceCounts = count of samples in each reference class;
+$predictionCounts = count of predictions in each class;
+$overallAccuracy = overall accuracy;
+$MICE = map image classification efficacy;
+$usersAccuracies = class-level user's accuracies (1 - commission error);
+$CTBICEs = classification-total-based image classification efficacies (adjusted user's accuracies);
+$producersAccuracies = class-level producer's accuracies (1 - omission error);
+$RTBICEs = reference-total-based image classification efficacies (adjusted producer's accuracies);
+$F1Scores = class-level harmonic mean of user's and producer's accuracies;
+$F1Efficacies = F1-score efficacies;
+$macroPA = class-aggregated, macro-averaged producer's accuracy;
+$macroRTBICE = class-aggregated, macro-averaged reference-total-based image classification efficacy;
+$macroUA = class-aggregated, macro-averaged user's accuracy;
+$macroCTBICE = class-aggregated, macro-averaged classification-total-based image classification efficacy;
+$macroF1 = class-aggregated, macro-averaged F1-score;
+$macroF1Efficacy = class-aggregated, macro-averaged F1 efficacy;
 }
 \details{
 For binary classification, returns a list object with the following items:
 $Mappings = class names;
-$confusionMatrix = confusion matrix where columns represent the reference data and rows represent the classification result
-$referenceCounts = count of samples in each reference class
-$predictionCounts = count of predictions in each class
-$postiveCase = name or mapping for the positive case
-$overallAccuracy = overall accuracy
-$MICE = map image classification efficacy
-$Precision = precision (1 - commission error relative to positive case)
-$precisionEfficacy = precision efficacy
-$NPV = negative predictive value (1 - commission error relative to negative case)
-$npvEfficacy = negative predictive value efficacy
-$Recall = recall recall (1 - omission error relative to positive case)
-$recallEfficacy = recall efficacy
-$specificity = specificity (1 - omission error relative to negative case)
-$specificityEfficacy = specificity efficacy
-$f1Score = harmonic mean of precision and recall
-$f1Efficacy = F1-score efficacy
+$confusionMatrix = confusion matrix where columns represent the reference data and rows represent the classification result;
+$referenceCounts = count of samples in each reference class;
+$predictionCounts = count of predictions in each class;
+$postiveCase = name or mapping for the positive case;
+$overallAccuracy = overall accuracy;
+$MICE = map image classification efficacy;
+$Precision = precision (1 - commission error relative to positive case);
+$precisionEfficacy = precision efficacy;
+$NPV = negative predictive value (1 - commission error relative to negative case);
+$npvEfficacy = negative predictive value efficacy;
+$Recall = recall (1 - omission error relative to positive case);
+$recallEfficacy = recall efficacy;
+$specificity = specificity (1 - omission error relative to negative case);
+$specificityEfficacy = specificity efficacy;
+$f1Score = harmonic mean of precision and recall;
+$f1Efficacy = F1-score efficacy;
 }
 \examples{
 #Multiclass example

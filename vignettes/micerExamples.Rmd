@@ -28,15 +28,15 @@ It was further explored in the following paper:
 
 Tang, L., Shao, J., Pang, S., Wang, Y., Maxwell, A., Hu, X., Gao, Z., Lan, T. and Shao, G., 2024. Bolstering Performance Evaluation of Image Segmentation Models with Efficacy Metrics in the Absence of a Gold Standard. *IEEE Transactions on Geoscience and Remote Sensing*.
 
-MICE is an alternative accuracy assessment. It adjusts the accuracy rate relative to a random classification baseline. Only the proportions from the reference labels are considered, as opposed to the proportions from the reference and predictions, as is the case for the Kappa statistic. This package specifically calculates MICE and adjusted versions of class-level user's (i.e., precision) and producer's (i.e., recall) accuracies and F1-scores. Class-level metrics are aggregated using macro-averaging in which each class contributes equally. Functions are also made available to estimate confidence intervals using bootstrapping and to statistically compare two classification results.
+MICE adjusts the accuracy rate relative to a random classification baseline. Only the proportions from the reference labels are considered, as opposed to the proportions from the reference and predictions, as is the case for the Kappa statistic. Due to documented issues with the Kappa statistic, its use in remote sensing and thematic map accuracy assessment is being discouraged. MICE offers an alternative to Kappa. This package specifically calculates MICE and adjusted versions of class-level user's (i.e., precision) and producer's (i.e., recall) accuracies and F1-scores. Class-level metrics are aggregated using macro-averaging in which each class contributes equally. Functions are also made available to estimate confidence intervals (CIs) using bootstrapping and to statistically compare two classification results.
 
-This articles demonstrates the functions made available by micer. 
+This article demonstrates the functions made available by micer. 
 
 ## Calculate assessment metrics
 
 The metrics calculated depend on whether the problem is framed as a multiclass or binary classification. Multiclass must be used when more than two classes are differentiated. If two classes are differentiated, binary should be used if there is a clear positive, presence, or foreground class and a clear negative, absence, or background class. If this is not the case, multiclass mode is more meaningful.
 
-The mice() function is used to calculate a set of metrics by providing vectors or a dataframe with reference and predicted classes. Alternatively, the miceCM() function can be used to calculate the metrics from a confusion matrix table where the columns represent the correct label and the rows represent the predicted labels. 
+The mice() function is used to calculate a set of metrics by providing vectors or a dataframe containing columns of reference and predicted class labels. Alternatively, the miceCM() function can be used to calculate the metrics from a confusion matrix table where the columns represent the correct label and the rows represent the predicted labels. 
 
 Results are returned as a list object. For a multiclass classification, the following objects are returned:
 
@@ -49,8 +49,8 @@ Results are returned as a list object. For a multiclass classification, the foll
 * **usersAccuracies** = class-level user's accuracies (1 - commission error)
 * **CTBICEs** = classification-total-based image classification efficacies (adjusted user's accuracies)
 * **producersAccuracies** = class-level producer's accuracies (1 - omission error)
-* **RTBICEs** = reference-total-based image classification efficacies (adjusted user's accuracies)
-* **F1Scores** = class-level harmonic mean of user's and producer's accuracies
+* **RTBICEs** = reference-total-based image classification efficacies (adjusted producer's accuracies)
+* **F1Scores** = class-level harmonic means of user's and producer's accuracies
 * **F1Efficacies** = F1-score efficacies
 * **macroPA** = class-aggregated, macro-averaged producer's accuracy
 * **macroRTBICE** = class-aggregated, macro-averaged reference-total-based image classification efficacy
@@ -59,7 +59,7 @@ Results are returned as a list object. For a multiclass classification, the foll
 * **macroF1** = class-aggregated, macro-averaged F1-score
 * **macroF1Efficacy** = class-aggregated, macro-averaged F1 efficacy
 
-The mcData.rda data included with the package represents a multiclass problem in which the following classes are differentiated: "Barren" (n=163), "Forest" (n=20,807), "Impervious" (n=426), "Low Vegetation" (n=3,182), "Mixed Dev" (n=520), and "Water" (n=200). There are a total of 25,298 samples.The code example below shows how to derive assessment metrics for these data using both the mice() and miceCM() functions. To perform multiclass assessment, the multiclass argument must be set to TRUE. The mappings parameter allow the users to provide names for each class. If no mappings are provided, the default factor level names will be used. 
+The mcData.rda data included with the package represents a multiclass problem in which the following classes are differentiated (counts are relative to the reference labels): "Barren" (n=163), "Forest" (n=20,807), "Impervious" (n=426), "Low Vegetation" (n=3,182), "Mixed Dev" (n=520), and "Water" (n=200). There are a total of 25,298 samples. The code example below shows how to derive assessment metrics for these data using both the mice() and miceCM() functions. To perform multiclass assessment, the multiclass argument must be set to TRUE. The mappings parameter allows the user to provide names for each class. If no mappings are provided, the default factor level names are used. 
 
 ```{r}
 data(mcData)
@@ -88,11 +88,9 @@ miceResultMC <- miceCM(cmMC,
 print(miceResultMC)
 ```
 
-For a binary classification, the following objects are returned:
+For a binary classification, the following objects are returned within a list object:
 
-For binary classification, returns a list object with the following items:
-
-* **Mappings** = class names;
+* **Mappings** = class names
 * **confusionMatrix** = confusion matrix where columns represent the reference data and rows represent the classification result
 * **referenceCounts** = count of samples in each reference class
 * **predictionCounts** = count of predictions in each class
@@ -103,7 +101,7 @@ For binary classification, returns a list object with the following items:
 * **precisionEfficacy** = precision efficacy
 * **NPV** = negative predictive value (1 - commission error relative to negative case)
 * **npvEfficacy** = negative predictive value efficacy
-* **Recall** = recall recall (1 - omission error relative to positive case)
+* **Recall** = recall (1 - omission error relative to positive case)
 * **recallEfficacy** = recall efficacy
 * **specificity** = specificity (1 - omission error relative to negative case)
 * **specificityEfficacy** = specificity efficacy
@@ -111,7 +109,7 @@ For binary classification, returns a list object with the following items:
 * **f1Efficacy** = F1-score efficacy
 
 The biData.rda file included with the package represents results for a binary classification. "Mine" is the positive case and "Not Mine" is the background class. There are 178 samples from the "Mine" class and
-4,822 samples from the "Not Mine" class. Class proportions are based on landscape proportions.There are a total of 5,000 samples. The example code below demonstrates calculating binary assessment results using mice() and miceCM(). When performing assessment for a binary classification, the multiclass parameter must be set to FALSE and the index associated with the positive case must be provided. Here, "Mine" has an index of 1 while "Not Mine" has an index of 2. 
+4,822 samples from the "Not Mine" class. Class proportions are based on landscape proportions and are relative to the reference labels. There are a total of 5,000 samples. The example code below demonstrates calculating binary assessment results using mice() and miceCM(). When performing assessment for a binary classification, the multiclass parameter must be set to FALSE and the index associated with the positive case must be provided. Here, "Mine" has an index of 1 while "Not Mine" has an index of 2. 
 
 ```{r}
 data(biData)
@@ -132,7 +130,8 @@ miceResultBI <- miceCM(cmB,
 
 print(miceResultBI)
 ```
-The miceCI() function calculates confidence intervals for all aggregated metrics. This is accomplished by calculating the metrics using a large number of subsets from the entire dataset. Subsets are generated using bootstrapping. In our examples below, 1,000 replicates are used with reach replicate including 70% of the available samples. The lowPercentile and highPercentile argument allows for defining the confidence interval to use. In our example, it is configured for a 95% confidence interval. The result is a dataframe object the includes the mean, median, and upper and lower confidence intervals for all aggregated metrics. 
+
+The miceCI() function calculates confidence intervals for all aggregated metrics. This is accomplished by calculating the metrics using a large number of subsets from the entire dataset. Subsets are generated using bootstrapping. In our examples below, 1,000 replicates are used with reach replicate including 70% of the available samples. The lowPercentile and highPercentile arguments allow for defining the confidence interval to use. In our example, it is configured for a 95% confidence interval. The result is a dataframe object the includes the mean, median, and upper and lower confidence intervals for all aggregated metrics. 
 
 ```{r}
 data(mcData)
@@ -171,7 +170,8 @@ ciResultsBi <- miceCI(rep=1000,
 
 print(ciResultsBi)
 ```
-Lastly, MICE metrics can be compared between two models. This will require having the reference labels and the predictions from two separate models. The comparison is performed using a paired t-test, a large number of bootstrap replicates, and by comparing the difference between the calculated metric on a pairwise basis for each bootstrap sample. In the provided example, which makes use of the compareData.rda data provided with micer, the mean difference between MICE metrics for a random forest and single decision tree model is 0.108, and the two models are suggested to be statistically different using a 95% confidence interval. 
+
+Lastly, MICE metrics can be compared between two models. This requires the reference labels and the predictions from two separate models. The comparison is performed using a paired t-test, a large number of bootstrap replicates, and by comparing the difference between the calculated metric on a pairwise basis for each bootstrap sample. In the provided example, which makes use of the compareData.rda data provided with micer, the mean difference between MICE metrics for a random forest and single decision tree model is 0.108, and the two models are suggested to be statistically different using a 95% confidence interval. 
 
 ```{r}
 data(compareData)

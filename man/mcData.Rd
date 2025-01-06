@@ -6,13 +6,13 @@
 \title{Example multiclass classification dataset}
 \format{
 \describe{
-\item{ref}{correct label}
+\item{ref}{reference label}
 \item{pred}{predicted label}
 }
 }
 \description{
-Example multiclass classification dataset with the following classes: "Barren" (n=163),
-"Forest" (n=20,807), "Impervious" (n=426), "Low Vegetation" (n=3,182), "Mixed Dev" (n=520),
+Example multiclass classification dataset with the following classes (counts relative to reference labels):
+"Barren" (n=163), "Forest" (n=20,807), "Impervious" (n=426), "Low Vegetation" (n=3,182), "Mixed Dev" (n=520),
 and "Water" (n=200). There are a total of 25,298 samples.
 }
 \references{

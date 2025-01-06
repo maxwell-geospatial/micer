@@ -7,11 +7,11 @@
 miceCompare(ref, result1, result2, reps, frac)
 }
 \arguments{
-\item{ref}{column of reference data as factor data type.}
+\item{ref}{column of reference labels as factor data type.}
 
-\item{result1}{column of predictions as factor data type (first result to compare).}
+\item{result1}{column of predicted labels as factor data type (first result to compare).}
 
-\item{result2}{column of predictions as factor data type (second result to compare).}
+\item{result2}{column of predicted labels as factor data type (second result to compare).}
 
 \item{reps}{number of bootstrap replicates to use. Default is 200.}
 

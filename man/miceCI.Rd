@@ -25,11 +25,11 @@ miceCI(
 
 \item{highPercentile}{upper percentile for confidence interval. Default is 0.975 for a 95\% CI.}
 
-\item{reference}{column of reference data as factor data type.}
+\item{reference}{column of reference labels as factor data type.}
 
-\item{prediction}{column of reference data as factor data type.}
+\item{prediction}{column of predicted labels as factor data type.}
 
-\item{mappings}{Names of classes (if not provided, factor levels are used).}
+\item{mappings}{names of classes (if not provided, factor levels are used).}
 
 \item{multiclass}{TRUE or FALSE. If TRUE, treats classification as multiclass. If FALSE, treats classification as binary. Default is TRUE.}
 

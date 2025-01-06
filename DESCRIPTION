@@ -7,7 +7,7 @@ Authors@R: c(
   person(family="Maxwell", given="Aaron", email="Aaron.Maxwell@mail.wvu.edu", role=c("aut", "cre", "cph")),
   person(family="Farhadpour", given="Sarah", email="sf00039@mix.wvu.edu", role=c("aut")))
 Maintainer: Aaron Maxwell <Aaron.Maxwell@mail.wvu.edu>
-Description: Map image classificatino efficacy (MICE) is an alternative accuracy assessment. It adjusts the accuracy rate relative to a random classification baseline. Only the proportions from the reference labels are considered, as opposed to the proportions from the reference and predictions, as is the case for the Kappa statistic. This package offers means to calculate MICE and adjusted versions of class-level user's (i.e., precision) and producer's (i.e., recall) accuracies and F1-scores. Class-level metrics are aggregated using macro-averaging. Functions are also made avaiable to estiamte confidence intervals using bootstrapping and statistically compare two classification results. 
+Description: Map image classificatino efficacy (MICE) adjusts the accuracy rate relative to a random classification baseline. Only the proportions from the reference labels are considered, as opposed to the proportions from the reference and predictions, as is the case for the Kappa statistic. This package offers means to calculate MICE and adjusted versions of class-level user's (i.e., precision) and producer's (i.e., recall) accuracies and F1-scores. Class-level metrics are aggregated using macro-averaging. Functions are also made available to estiamte confidence intervals using bootstrapping and statistically compare two classification results. 
 Depends: R (>= 2.10)
 Imports:
     dplyr (>= 1.1.3),

@@ -7,14 +7,15 @@
 \format{
 \describe{
 \item{ref}{correct label}
-\item{rfRred}{Random forest prediction}
-\item{dfRred}{Single decision tree prediction}
+\item{rfRred}{random forest prediction}
+\item{dfRred}{single decision tree prediction}
 }
 }
 \description{
-Example multiclass classification dataset with the following classes: "PFO", "PEM", "RLP",
-and "Not". PFO = Palustrine Forested; PEM = Palustrine Emergent; RLP = River, Lake, Pond; Not = Not
-Wetland. There are 600 examples from each class.
+Example multiclass classification dataset with the following wetland-related classes:
+"PFO", "PEM", "RLP", and "Not". PFO = Palustrine Forested; PEM = Palustrine Emergent;
+RLP = River, Lake, Pond; Not = Not Wetland. There are 600 examples from each class relative to the
+reference labels.
 }
 \references{
 These data are unpublished

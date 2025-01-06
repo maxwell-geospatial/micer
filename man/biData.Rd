@@ -3,18 +3,18 @@
 \docType{data}
 \name{biData}
 \alias{biData}
-\title{Example binary classification dataset.}
+\title{Example binary classification dataset}
 \format{
 \describe{
-\item{ref}{correct label}
+\item{ref}{reference label}
 \item{pred}{predicted label}
 }
 }
 \description{
 Example binary classification dataset. "Mine" is the positive case and
 "Not Mine" is the background class. There are 178 samples from the "Mine" class and
-4,822 samples from the "Not Mine" class. Class proportions are based on landscape proportions.
-There are a total of 5,000 samples.
+4,822 samples from the "Not Mine" class. Counts are relative to reference labels.
+Class proportions are based on landscape proportions. There are a total of 5,000 samples.
 }
 \references{
 Maxwell, A.E., Bester, M.S., Guillen, L.A., Ramezan, C.A., Carpinello, D.J., Fan, Y.,

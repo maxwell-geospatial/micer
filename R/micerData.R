@@ -2,16 +2,16 @@
 #'
 #' @description Example binary classification dataset. "Mine" is the positive case and
 #' "Not Mine" is the background class. There are 178 samples from the "Mine" class and
-#' 4,822 samples from the "Not Mine" class. Class proportions are based on landscape proportions.
-#' There are a total of 5,000 samples.
+#' 4,822 samples from the "Not Mine" class. Counts are relative to reference labels.
+#' Class proportions are based on landscape proportions. There are a total of 5,000 samples.
 #'
 #' @docType data
 #'
-#' @title Example binary classification dataset.
+#' @title Example binary classification dataset
 #'
 #' @format
 #' \describe{
-#'   \item{ref}{correct label}
+#'   \item{ref}{reference label}
 #'   \item{pred}{predicted label}
 #' }
 #'
@@ -25,8 +25,8 @@ NULL
 
 #' @name mcData
 #'
-#' @description Example multiclass classification dataset with the following classes: "Barren" (n=163),
-#' "Forest" (n=20,807), "Impervious" (n=426), "Low Vegetation" (n=3,182), "Mixed Dev" (n=520),
+#' @description Example multiclass classification dataset with the following classes (counts relative to reference labels):
+#' "Barren" (n=163), "Forest" (n=20,807), "Impervious" (n=426), "Low Vegetation" (n=3,182), "Mixed Dev" (n=520),
 #' and "Water" (n=200). There are a total of 25,298 samples.
 #'
 #' @title Example multiclass classification dataset
@@ -35,7 +35,7 @@ NULL
 #'
 #' @format
 #' \describe{
-#'   \item{ref}{correct label}
+#'   \item{ref}{reference label}
 #'   \item{pred}{predicted label}
 #' }
 #'
@@ -49,9 +49,10 @@ NULL
 
 #' @name compareData
 #'
-#' @description Example multiclass classification dataset with the following classes: "PFO", "PEM", "RLP",
-#' and "Not". PFO = Palustrine Forested; PEM = Palustrine Emergent; RLP = River, Lake, Pond; Not = Not
-#' Wetland. There are 600 examples from each class.
+#' @description Example multiclass classification dataset with the following wetland-related classes:
+#' "PFO", "PEM", "RLP", and "Not". PFO = Palustrine Forested; PEM = Palustrine Emergent;
+#' RLP = River, Lake, Pond; Not = Not Wetland. There are 600 examples from each class relative to the
+#' reference labels.
 #'
 #' @docType data
 #'
@@ -60,8 +61,8 @@ NULL
 #' @format
 #' \describe{
 #'   \item{ref}{correct label}
-#'   \item{rfRred}{Random forest prediction}
-#'   \item{dfRred}{Single decision tree prediction}
+#'   \item{rfRred}{random forest prediction}
+#'   \item{dfRred}{single decision tree prediction}
 #' }
 #'
 #' @references These data are unpublished
