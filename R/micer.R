@@ -72,7 +72,7 @@ mice <- function(reference, #Factor of correct/reference labels
 
   positiveIndex <- as.numeric(positiveIndex) #Make sure index is numeric
 
-  ctab <- table(reference, prediction) #generate contingency table
+  ctab <- table(prediction, reference) #generate contingency table
 
   colnames(ctab) <- mappings #Apply class names to columns
   rownames(ctab) <- mappings #Apply class names to rows
@@ -83,7 +83,7 @@ mice <- function(reference, #Factor of correct/reference labels
   predCnts <- rowSums(ctab) #Get row total counts
   names(predCnts) <- mappings #Name row counts
 
-  oa <- sum(diag(ctab))/sum(ctab) #Calcualte overall accuracy
+  oa <- sum(diag(ctab))/sum(ctab) #Calculate overall accuracy
   sumCols <- colSums(ctab)
   sumRows <- rowSums(ctab)
 
@@ -99,7 +99,7 @@ mice <- function(reference, #Factor of correct/reference labels
   f1 <- (2*ua*pa)/(ua+pa) #Calculate all class F1-scores ((2*Precision*Recall)/(precision+recall))
 
   rtbice <- (pa - sumColsN)/(1- sumColsN) #Calculate all reference-total-based image classification efficacies
-  ctbice <- (ua - sumColsN)/(1- sumColsN) #Calcualte all classification-total-based image classification efficacies
+  ctbice <- (ua - sumColsN)/(1- sumColsN) #Calculate all classification-total-based image classification efficacies
   f1Efficacy <- (2*rtbice*ctbice)/(rtbice+ctbice) #Calculate F1-scores with efficacy-based correction
 
   if(multiclass==TRUE){
@@ -145,7 +145,7 @@ mice <- function(reference, #Factor of correct/reference labels
   }else{
 
     #Return list object for binary classification
-    negativeIndex = 2 - positiveIndex
+    negativeIndex = 3 - positiveIndex
     return(list(Mappings = mappings,
                 confusionMatrix = ctab,
                 referenceCounts = refCnts,
@@ -219,14 +219,14 @@ mice <- function(reference, #Factor of correct/reference labels
 #' @examples
 #' #Multiclass example
 #' data(mcData)
-#' cmMC <- table(mcData$ref, mcData$pred)
+#' cmMC <- table(mcData$pred, mcData$ref)
 #' miceCM(cmMC,
 #' mappings=c("Barren", "Forest", "Impervious", "Low Vegetation", "Mixed Dev", "Water"),
 #' multiclass=TRUE)
 #'
 #' #Binary example
 #' data(biData)
-#' cmB <- table(biData$ref, biData$pred)
+#' cmB <- table(biData$pred, biData$ref)
 #' miceMCResult <- miceCM(cmB,
 #' mappings=c("Mined", "Not Mined"),
 #' multiclass=FALSE,
@@ -315,7 +315,7 @@ miceCM <- function(cm,#Factor of predicted labels
   }else{
 
     #Return list object for binary classification
-    negativeIndex = 2 - positiveIndex
+    negativeIndex = 3 - positiveIndex
     return(list(Mappings = mappings,
                 confusionMatrix = ctab,
                 referenceCounts = refCnts,
@@ -431,7 +431,7 @@ miceCI <- function(reps=200,
 
     subData <- inData |> dplyr::sample_frac(frac, replace=TRUE)
 
-    ctab <- table(subData$ref, subData$pred) #generate contingency table
+    ctab <- table(subData$pred, subData$ref) #generate contingency table
 
     colnames(ctab) <- mappings #Apply class names to columns
     rownames(ctab) <- mappings #Apply class names to rows
@@ -569,7 +569,7 @@ miceCompare <- function(ref, result1, result2, reps, frac){
 
     subData <- inData |> dplyr::sample_frac(frac, replace=TRUE)
 
-    ctab1 <- table(subData$ref, subData$result1)
+    ctab1 <- table(subData$result1, subData$ref)
 
 
     oa1 <- sum(diag(ctab1))/sum(ctab1)
@@ -583,7 +583,7 @@ miceCompare <- function(ref, result1, result2, reps, frac){
     mice1 <- (oa1-oa01)/(1-oa01)
 
 
-    ctab2 <- table(subData$ref, subData$result2)
+    ctab2 <- table(subData$result2, subData$ref)
 
 
     oa2 <- sum(diag(ctab2))/sum(ctab2)
