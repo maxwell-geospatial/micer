@@ -2,7 +2,7 @@
 % Please edit documentation in R/micer.R
 \name{miceCompare}
 \alias{miceCompare}
-\title{Statistically compare two models using a paired t-test and bootstrap samples of the assessment results}
+\title{miceCompare}
 \usage{
 miceCompare(ref, result1, result2, reps, frac)
 }

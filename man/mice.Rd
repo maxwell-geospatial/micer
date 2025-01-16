@@ -2,7 +2,7 @@
 % Please edit documentation in R/micer.R
 \name{mice}
 \alias{mice}
-\title{Calculate map image classification efficacy (MICE) and other metrics using columns/vectors of reference and predicted classes}
+\title{mice}
 \usage{
 mice(
   reference,
@@ -27,6 +27,9 @@ mice(
 multiclass or binary assessment metrics in a list object. See details for description of generated metrics.
 }
 \description{
+Calculate map image classification efficacy (MICE) and other metrics using columns/vectors of reference and predicted classes
+}
+\details{
 For multiclass classification, returns a list object with the following items:
 $Mappings = class names;
 $confusionMatrix = confusion matrix where columns represent the reference data and rows represent the classification result;
@@ -46,8 +49,7 @@ $macroUA = class-aggregated, macro-averaged user's accuracy;
 $macroCTBICE = class-aggregated, macro-averaged classification-total-based image classification efficacy;
 $macroF1 = class-aggregated, macro-averaged F1-score;
 $macroF1Efficacy = class-aggregated, macro-averaged F1 efficacy;
-}
-\details{
+
 For binary classification, returns a list object with the following items:
 $Mappings = class names;
 $confusionMatrix = confusion matrix where columns represent the reference data and rows represent the classification result;

@@ -75,7 +75,7 @@ miceResultMC <- mice(mcData$ref,
                      multiclass=TRUE)
 
 
-cmMC <- table(mcData$ref, mcData$pred)
+cmMC <- table(mcData$pred, mcData$ref)
 miceResultMC <- miceCM(cmMC,
                        mappings=c("Barren", 
                                   "Forest", 
@@ -121,7 +121,7 @@ miceResultBI <- mice(biData$ref,
                      multiclass=FALSE,
                      positiveIndex=1)
 
-cmB <- table(biData$ref, biData$pred)
+cmB <- table(biData$pred, biData$ref)
 miceResultBI <- miceCM(cmB,
                        mappings=c("Mined", 
                                   "Not Mined"),
@@ -156,7 +156,6 @@ print(ciResultsMC)
 ```{r}
 data(biData)
 
-set.seed(42)
 ciResultsBi <- miceCI(rep=1000,
                       frac=.7,
                       biData$ref,

@@ -1,3 +1,5 @@
+#' mice
+#'
 #' Calculate map image classification efficacy (MICE) and other metrics using columns/vectors of reference and predicted classes
 #'
 #' For multiclass classification, returns a list object with the following items:
@@ -170,6 +172,8 @@ mice <- function(reference, #Factor of correct/reference labels
 }
 
 
+#' miceCM
+#'
 #' Calculate map image classification efficacy (MICE) and other metrics using confusion matrix
 #'
 #' For multiclass classification, returns a list object with the following items:
@@ -339,6 +343,8 @@ miceCM <- function(cm,#Factor of predicted labels
   }
 }
 
+#' miceCI
+#'
 #' Calculate confidence intervals (CIs) for MICE and associated metrics using bootstrap sampling and the percentile method.
 #'
 #' Confidence intervals are estimated for overall accuracy, MICE, and all class-aggregated, macro-averaged metrics produced by mice() or miceCM().
@@ -537,6 +543,8 @@ miceCI <- function(reps=200,
   return(resultStats)
 }
 
+#' miceCompare
+#'
 #' Statistically compare two models using a paired t-test and bootstrap samples of the assessment results
 #'
 #' @param ref column of reference labels as factor data type.

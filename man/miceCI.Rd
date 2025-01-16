@@ -2,7 +2,7 @@
 % Please edit documentation in R/micer.R
 \name{miceCI}
 \alias{miceCI}
-\title{Calculate confidence intervals (CIs) for MICE and associated metrics using bootstrap sampling and the percentile method.}
+\title{miceCI}
 \usage{
 miceCI(
   reps = 200,
@@ -39,6 +39,9 @@ miceCI(
 dataframe object of metric name and estimated mean value, median value, and lower and upper CIs.
 }
 \description{
+Calculate confidence intervals (CIs) for MICE and associated metrics using bootstrap sampling and the percentile method.
+}
+\details{
 Confidence intervals are estimated for overall accuracy, MICE, and all class-aggregated, macro-averaged metrics produced by mice() or miceCM().
 Returns metric name, mean metric value, median metric value, lower confidence interval bounds (low.ci), and upper confidence interval bounds
 (upper.ci) as a dataframe object.
