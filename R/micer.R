@@ -431,7 +431,7 @@ miceCI <- function(reps=200,
   i <- 1
   while(i <= reps){
 
-    subData <- inData |> dplyr::sample_n(nrow(inData), replace=TRUE)
+    subData <- dplyr::sample_n(inData, nrow(inData), replace=TRUE)
 
     ctab <- table(subData$pred, subData$ref) #generate contingency table
 
@@ -569,7 +569,7 @@ miceCompare <- function(ref, result1, result2, reps){
   i <- 1
   while(i <= reps){
 
-    subData <- inData |> dplyr::sample_n(nrow(inData), replace=TRUE)
+    subData <- dplyr::sample_n(inData, nrow(inData), replace=TRUE)
 
     ctab1 <- table(subData$result1, subData$ref)
 
