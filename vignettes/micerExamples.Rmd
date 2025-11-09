@@ -131,13 +131,12 @@ miceResultBI <- miceCM(cmB,
 print(miceResultBI)
 ```
 
-The miceCI() function calculates confidence intervals for all aggregated metrics. This is accomplished by calculating the metrics using a large number of subsets from the entire dataset. Subsets are generated using bootstrapping. In our examples below, 1,000 replicates are used with reach replicate including 70% of the available samples. The lowPercentile and highPercentile arguments allow for defining the confidence interval to use. In our example, it is configured for a 95% confidence interval. The result is a dataframe object the includes the mean, median, and upper and lower confidence intervals for all aggregated metrics. 
+The miceCI() function calculates confidence intervals for all aggregated metrics. This is accomplished by calculating the metrics using a large number of subsets from the entire dataset. Subsets are generated using bootstrapping. In our examples below, 1,000 replicates are used. The lowPercentile and highPercentile arguments allow for defining the confidence interval to use. In our example, it is configured for a 95% confidence interval. The result is a dataframe object the includes the mean, median, and upper and lower confidence intervals for all aggregated metrics. 
 
 ```{r}
 data(mcData)
 
 ciResultsMC <- miceCI(rep=1000,
-                      frac=.7,
                       mcData$ref,
                       mcData$pred,
                       lowPercentile=0.025,
@@ -157,7 +156,6 @@ print(ciResultsMC)
 data(biData)
 
 ciResultsBi <- miceCI(rep=1000,
-                      frac=.7,
                       biData$ref,
                       biData$pred,
                       lowPercentile=0.025,
@@ -179,8 +177,7 @@ set.seed(42)
 compareResult <- miceCompare(ref=compareData$ref,
                              result1=compareData$rfPred,
                              result2=compareData$dtPred,
-                             reps=1000,
-                             frac=.7)
+                             reps=1000)
 
 print(compareResult)
 ```

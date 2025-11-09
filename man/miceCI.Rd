@@ -6,7 +6,6 @@
 \usage{
 miceCI(
   reps = 200,
-  frac = 0.7,
   lowPercentile,
   highPercentile,
   reference,
@@ -18,8 +17,6 @@ miceCI(
 }
 \arguments{
 \item{reps}{number of bootstrap replicates to use. Default is 200.}
-
-\item{frac}{proportion of samples to include in each bootstrap sample. Default is 0.7.}
 
 \item{lowPercentile}{lower percentile for confidence interval. Default is 0.025 for a 95\% CI.}
 
@@ -49,8 +46,7 @@ Returns metric name, mean metric value, median metric value, lower confidence in
 \examples{
 #Multiclass example
 data(mcData)
-ciResultsMC <- miceCI(rep=1000,
-frac=.7,
+ciResultsMC <- miceCI(rep=100,
 mcData$ref,
 mcData$pred,
 lowPercentile=0.025,
@@ -62,8 +58,7 @@ print(ciResultsMC)
 
 #Binary example
 data(biData)
-ciResultsBi <- miceCI(rep=1000,
-frac=.7,
+ciResultsBi <- miceCI(rep=100,
 biData$ref,
 biData$pred,
 lowPercentile=0.025,

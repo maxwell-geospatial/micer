@@ -352,7 +352,6 @@ miceCM <- function(cm,#Factor of predicted labels
 #' (upper.ci) as a dataframe object.
 #'
 #' @param reps number of bootstrap replicates to use. Default is 200.
-#' @param frac proportion of samples to include in each bootstrap sample. Default is 0.7.
 #' @param lowPercentile lower percentile for confidence interval. Default is 0.025 for a 95% CI.
 #' @param highPercentile upper percentile for confidence interval. Default is 0.975 for a 95% CI.
 #' @param reference column of reference labels as factor data type.
@@ -364,8 +363,7 @@ miceCM <- function(cm,#Factor of predicted labels
 #' @examples
 #' #Multiclass example
 #' data(mcData)
-#' ciResultsMC <- miceCI(rep=1000,
-#' frac=.7,
+#' ciResultsMC <- miceCI(rep=100,
 #' mcData$ref,
 #' mcData$pred,
 #' lowPercentile=0.025,
@@ -377,8 +375,7 @@ miceCM <- function(cm,#Factor of predicted labels
 #'
 #' #Binary example
 #' data(biData)
-#' ciResultsBi <- miceCI(rep=1000,
-#' frac=.7,
+#' ciResultsBi <- miceCI(rep=100,
 #' biData$ref,
 #' biData$pred,
 #' lowPercentile=0.025,
@@ -391,7 +388,6 @@ miceCM <- function(cm,#Factor of predicted labels
 #' @export
 #' @importFrom stats median quantile setNames t.test
 miceCI <- function(reps=200,
-                   frac=.7,
                    lowPercentile,
                    highPercentile,
                    reference, #Factor of correct/reference labels
@@ -435,7 +431,7 @@ miceCI <- function(reps=200,
   i <- 1
   while(i <= reps){
 
-    subData <- inData |> dplyr::sample_frac(frac, replace=TRUE)
+    subData <- inData |> dplyr::sample_n(nrow(inData), replace=TRUE)
 
     ctab <- table(subData$pred, subData$ref) #generate contingency table
 
@@ -551,19 +547,17 @@ miceCI <- function(reps=200,
 #' @param result1 column of predicted labels as factor data type (first result to compare).
 #' @param result2 column of predicted labels as factor data type (second result to compare).
 #' @param reps number of bootstrap replicates to use. Default is 200.
-#' @param frac proportion of samples to include in each bootstrap sample. Default is 0.7.
 #' @returns paired t-test results including t-statistic, degrees of freedom, p-value, 95% confidence interval, and mean difference
 #' @examples
 #' data(compareData)
 #' compareResult <- miceCompare(ref=compareData$ref,
 #' result1=compareData$rfPred,
 #' result2=compareData$dtPred,
-#' reps=1000,
-#' frac=.7)
+#' reps=100)
 #' print(compareResult)
 #' @export
 #' @importFrom stats median quantile setNames t.test
-miceCompare <- function(ref, result1, result2, reps, frac){
+miceCompare <- function(ref, result1, result2, reps){
   #Compare two models using bootstrapping and paired t-test
   #https://www.tmwr.org/compare
 
@@ -575,7 +569,7 @@ miceCompare <- function(ref, result1, result2, reps, frac){
   i <- 1
   while(i <= reps){
 
-    subData <- inData |> dplyr::sample_frac(frac, replace=TRUE)
+    subData <- inData |> dplyr::sample_n(nrow(inData), replace=TRUE)
 
     ctab1 <- table(subData$result1, subData$ref)
 

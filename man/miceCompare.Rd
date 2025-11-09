@@ -4,7 +4,7 @@
 \alias{miceCompare}
 \title{miceCompare}
 \usage{
-miceCompare(ref, result1, result2, reps, frac)
+miceCompare(ref, result1, result2, reps)
 }
 \arguments{
 \item{ref}{column of reference labels as factor data type.}
@@ -14,8 +14,6 @@ miceCompare(ref, result1, result2, reps, frac)
 \item{result2}{column of predicted labels as factor data type (second result to compare).}
 
 \item{reps}{number of bootstrap replicates to use. Default is 200.}
-
-\item{frac}{proportion of samples to include in each bootstrap sample. Default is 0.7.}
 }
 \value{
 paired t-test results including t-statistic, degrees of freedom, p-value, 95\% confidence interval, and mean difference
@@ -28,7 +26,6 @@ data(compareData)
 compareResult <- miceCompare(ref=compareData$ref,
 result1=compareData$rfPred,
 result2=compareData$dtPred,
-reps=1000,
-frac=.7)
+reps=100)
 print(compareResult)
 }
